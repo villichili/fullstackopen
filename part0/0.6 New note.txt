@@ -1,0 +1,13 @@
+title 0.6: New note
+
+note over browser:
+browser forms a JSON of the new note, 
+saves it to the list of notes and sends it to the server
+end note
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+note over server:
+browser sends post request to server with 
+{"content":"something","date":"2020-09-27T06:32:59.042Z"} 
+JSON as request payload 
+end note
+server-->browser: responds with message "note created"

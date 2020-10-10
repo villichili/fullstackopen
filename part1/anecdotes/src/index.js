@@ -1,9 +1,16 @@
 import React, {useState} from 'react'
 import ReactDOM from 'react-dom'
 
+/**
+ * Anecdotes app, shows random anecdote when clicking button, collects votes given for each
+ * @param props
+ * @returns {JSX.Element}
+ * @constructor
+ */
 const App = (props) => {
   const [selected, setSelected] = useState(0)
   const max = props.anecdotes?.length ?? 0
+  const [votes, setVotes] = useState(new Array(max).fill(0))
 
   function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max))
@@ -13,9 +20,17 @@ const App = (props) => {
     setSelected(getRandomInt(max))
   }
 
+  function handleVote() {
+    const votesCopy = [...votes]
+    votesCopy[selected] += 1
+    setVotes(votesCopy)
+  }
+
   return (
       <div>
         <p>{props.anecdotes[selected]}</p>
+        <p>has {votes[selected]} votes</p>
+        <button onClick={() => handleVote()}>vote</button>
         <button onClick={() => handleRandomClick()}>next random anecdote</button>
       </div>
   )

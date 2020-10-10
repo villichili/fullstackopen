@@ -11,17 +11,20 @@ const Button = (props) => (
     <button onClick={props.handleClick}>{props.text}</button>
 )
 /**
- * Statistic component for showing single statistic with given text and value
+ * Statistic component for showing single statistic table row with given text and value
  * @param props
  * @returns {JSX.Element}
  * @constructor
  */
 const Statistic = (props) => (
-    <p>{props.text} {props.value}</p>
+    <tr>
+      <td>{props.text}</td>
+      <td>{props.value}</td>
+    </tr>
 )
 
 /**
- * Statistic component for showing feedback amount, average and positive percentage
+ * Statistic component for showing given feedbacks, feedback amount, average and positive percentage in a table or a message if no feedbacks are given
  * @param props
  * @returns {JSX.Element}
  * @constructor
@@ -41,14 +44,16 @@ const Statistics = (props) => {
 
   if (good || neutral || bad) {
     return (
-        <>
+        <table>
+          <tbody>
           <Statistic text={'Good'} value={good}/>
           <Statistic text={'Neutral'} value={neutral}/>
           <Statistic text={'Bad'} value={bad}/>
           <Statistic text={'All'} value={getAllFeedbackAmount()}/>
           <Statistic text={'Average'} value={getAverageFeedback()}/>
           <Statistic text={'Positive'} value={getPositiveFeedbackPercent() + '%'}/>
-        </>
+          </tbody>
+        </table>
     )
   } else {
     return (

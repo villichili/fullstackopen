@@ -2,6 +2,36 @@ import React, {useState} from 'react'
 import ReactDOM from 'react-dom'
 
 /**
+ * Statistic component for showing feedback amount, average and positive percentage
+ * @param props
+ * @returns {JSX.Element}
+ * @constructor
+ */
+const Statistics = (props) => {
+  const {good, neutral, bad} = props
+
+  const getAllFeedbackAmount = () => {
+    return good + neutral + bad
+  }
+  const getAverageFeedback = () => {
+    return (good - bad) / getAllFeedbackAmount()
+  }
+  const getPositiveFeedbackPercent = () => {
+    return (good / getAllFeedbackAmount()) * 100
+  }
+
+  return (
+      <>
+        <p>Good {good}</p>
+        <p>Neutral {neutral}</p>
+        <p>Bad {bad}</p>
+        <p>All {getAllFeedbackAmount()}</p>
+        <p>Average {getAverageFeedback()}</p>
+        <p>Positive {getPositiveFeedbackPercent()} %</p>
+      </>
+  )
+}
+/**
  * Feedback app, enables user to give feedback (good, neutral or bad) and shows their statistics
  * @returns {JSX.Element}
  * @constructor
@@ -22,18 +52,6 @@ const App = () => {
     setBad(bad + 1)
   }
 
-  const getAllFeedbackAmount = () => {
-    return good + neutral + bad
-  }
-
-  const getAverageFeedback = () => {
-    return (good - bad) / getAllFeedbackAmount()
-  }
-
-  const getPositiveFeedbackPercent = () => {
-    return (good / getAllFeedbackAmount()) * 100
-  }
-
   return (
       <div>
         <h2>Give feedback</h2>
@@ -41,12 +59,7 @@ const App = () => {
         <button onClick={handleNeutralClick}>Neutral</button>
         <button onClick={handleBadClick}>Bad</button>
         <h2>Statistic</h2>
-        <p>Good {good}</p>
-        <p>Neutral {neutral}</p>
-        <p>Bad {bad}</p>
-        <p>All {good + neutral + bad}</p>
-        <p>Average {getAverageFeedback()}</p>
-        <p>Positive {getPositiveFeedbackPercent()} %</p>
+        <Statistics good={good} neutral={neutral} bad={bad}/>
       </div>
   )
 }

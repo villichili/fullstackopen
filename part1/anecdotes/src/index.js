@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import ReactDOM from 'react-dom'
 
 /**
- * Anecdotes app, shows random anecdote when clicking button, collects votes given for each
+ * Anecdotes app, shows random anecdote when clicking button, collects votes given for each and shows which anecdote has the most votes
  * @param props
  * @returns {JSX.Element}
  * @constructor
@@ -28,10 +28,14 @@ const App = (props) => {
 
   return (
       <div>
+        <h2>Anecdote of the day</h2>
         <p>{props.anecdotes[selected]}</p>
         <p>has {votes[selected]} votes</p>
         <button onClick={() => handleVote()}>vote</button>
         <button onClick={() => handleRandomClick()}>next random anecdote</button>
+        <h2>Anecdote with most votes</h2>
+        <p>{props.anecdotes[votes.indexOf(Math.max(...votes))]}</p>
+        <p>has {votes[votes.indexOf(Math.max(...votes))]} votes</p>
       </div>
   )
 }

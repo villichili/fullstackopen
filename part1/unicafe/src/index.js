@@ -20,16 +20,22 @@ const Statistics = (props) => {
     return (good / getAllFeedbackAmount()) * 100
   }
 
-  return (
-      <>
-        <p>Good {good}</p>
-        <p>Neutral {neutral}</p>
-        <p>Bad {bad}</p>
-        <p>All {getAllFeedbackAmount()}</p>
-        <p>Average {getAverageFeedback()}</p>
-        <p>Positive {getPositiveFeedbackPercent()} %</p>
-      </>
-  )
+  if (good || neutral || bad) {
+    return (
+        <>
+          <p>Good {good}</p>
+          <p>Neutral {neutral}</p>
+          <p>Bad {bad}</p>
+          <p>All {getAllFeedbackAmount()}</p>
+          <p>Average {getAverageFeedback()}</p>
+          <p>Positive {getPositiveFeedbackPercent()} %</p>
+        </>
+    )
+  } else {
+    return (
+        <p>No feedback given</p>
+    )
+  }
 }
 /**
  * Feedback app, enables user to give feedback (good, neutral or bad) and shows their statistics

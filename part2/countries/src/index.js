@@ -3,18 +3,36 @@ import ReactDOM from 'react-dom'
 import './index.css'
 import axios from 'axios'
 
-const Country = ({country}) => (
-    <div>
-      <h2>{country.name}</h2>
-      <p>{country.capital}</p>
-      <p>population {country.population}</p>
-      <h3>languages</h3>
-      <ul>
-        {country?.languages.map(l => <li key={l.iso639_1}>{l.name}</li>)}
-      </ul>
-      <img src={country.flag} width={200}/>
-    </div>
-)
+const Country = ({country}) => {
+  const [weather, setWeather] = useState({})
+  useEffect(() => {
+    axios.get(`http://api.weatherstack.com/current?access_key=${process.env.REACT_APP_WEATHER_API_KEY}&query=${country.capital}&units=m`)
+        .then(response => setWeather(response.data))
+  }, [])
+  console.log(weather)
+  return (
+      <div>
+        <h2>{country.name}</h2>
+        <p>{country.capital}</p>
+        <p>population {country.population}</p>
+        <h3>languages</h3>
+        <ul>
+          {country?.languages.map(l => <li key={l.iso639_1}>{l.name}</li>)}
+        </ul>
+        <img src={country.flag} width={200}/>
+        {weather && (
+            <div>
+              <h3>Weather in {country.capital}</h3>
+              <p><strong>temperature:</strong> {weather.current?.temperature} Celcius</p>
+              <div>
+                {weather.current?.weather_icons.map(i => <img src={i} width={40}/>)}
+              </div>
+              <p><strong>wind:</strong> {weather.current?.wind_speed} kmph direction {weather.current?.wind_dir}</p>
+            </div>
+        )}
+      </div>
+  )
+}
 
 const CountriesSection = ({countries, search}) => {
   if (countries?.length === 1) {

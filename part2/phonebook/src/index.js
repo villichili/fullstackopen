@@ -1,5 +1,6 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import ReactDOM from 'react-dom'
+import axios from 'axios'
 
 const Filter = ({handleSearchChange}) => <div>filter :<input onChange={handleSearchChange}/></div>
 
@@ -20,12 +21,14 @@ const PersonForm = ({addPerson, newName, handleNameChange, newNumber, handleNumb
 const Persons = ({filteredPersons}) => <>{filteredPersons.map(p => <div key={p.name}>{p.name} {p.number}</div>)}</>
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    {name: 'Arto Hellas', number: '040-1234567'}
-  ])
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newSearch, setNewSearch] = useState('')
+
+  useEffect(() => {
+    axios.get('http://localhost:3001/persons').then(response => setPersons(response.data)).catch()
+  }, [])
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)

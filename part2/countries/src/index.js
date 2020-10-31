@@ -16,12 +16,14 @@ const Country = ({country}) => (
     </div>
 )
 
-const CountriesSection = ({countries}) => {
+const CountriesSection = ({countries, search}) => {
   if (countries?.length === 1) {
     return <Country country={countries[0]}/>
   }
   if (countries?.length > 1 && countries.length < 10) {
-    return countries.map(c => <p>{c.name}</p>)
+    return countries.map(c => <p>{c.name}
+      <button onClick={() => search(c.name)}>show</button>
+    </p>)
   }
   return (
       <p>Too many matches, specify another filter</p>
@@ -44,7 +46,7 @@ const App = () => {
   return (
       <div>
         find countries: <input onChange={handleSearchChange}/>
-        <CountriesSection countries={filteredCountries}/>
+        <CountriesSection countries={filteredCountries} search={setSearch}/>
       </div>
   )
 }

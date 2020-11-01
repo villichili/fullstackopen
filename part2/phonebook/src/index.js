@@ -81,10 +81,19 @@ const App = () => {
   }
 
   const handleDelete = (event) => {
-    if (window.confirm(`Delete ${persons.find(p => p.id == event.target.value).name}`)) {
+    let personToDelete = persons.find(p => p.id == event.target.value)
+    if (window.confirm(`Delete ${personToDelete.name}`)) {
       personsService.deletePerson(event?.target.value).then(response => {
         if (response.status === 200) {
           getAllPersons()
+          showNotification(`Person (${personToDelete.name}) deleted successfully`, 'success')
+        }
+      }).catch(error => {
+        if (error?.message?.includes("Request failed with status code 404")) {
+          showNotification(`Information of ${personToDelete.name} has already been removed from server`, 'error')
+          getAllPersons()
+        } else {
+          showNotification(`Unexpected error ${error.message}`, 'error')
         }
       })
     }

@@ -1,8 +1,9 @@
 import React, {useState, useEffect} from 'react'
 import ReactDOM from 'react-dom'
 import personsService from "./services/persons"
+import './index.css'
 
-const Filter = ({handleSearchChange}) => <div>filter :<input onChange={handleSearchChange}/></div>
+const Filter = ({handleSearchChange}) => <div>filter: <input onChange={handleSearchChange}/></div>
 
 const PersonForm = ({addPerson, newName, handleNameChange, newNumber, handleNumberChange}) => {
   return <form onSubmit={addPerson}>
@@ -25,11 +26,18 @@ const Person = ({person, handleDelete}) =>
 
 const Persons = ({filteredPersons, handleDelete}) => <>{filteredPersons.map(p => <Person key={p.name} person={p} handleDelete={handleDelete}/>)}</>
 
+const Notification = ({notification}) => (
+    <div className={`notification ${notification.type}`}>
+      <p>{notification.message}</p>
+    </div>
+)
+
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newSearch, setNewSearch] = useState('')
+  const [notification, setNotification] = useState(null)
 
   useEffect(() => {
     getAllPersons()
@@ -38,6 +46,14 @@ const App = () => {
   const getAllPersons = () => {
     // This might not be necessary to always call for db to update could update the state also but this is easier
     personsService.getAll().then(persons => setPersons(persons)).catch()
+  }
+
+  const showNotification = (message, type) => {
+    setNotification({message, type})
+    setTimeout(() => {
+          setNotification(null)
+        }, 2500
+    )
   }
 
   const handleNameChange = (event) => {
@@ -56,8 +72,9 @@ const App = () => {
     if (window.confirm(`${person.name} is already added to phonebook, replace the old number with a new one?`)) {
       personsService.updatePerson(person.id, getNewPersonObject()).then(response => {
         if (response.status === 200) {
-          unsetValues()
           getAllPersons()
+          unsetValues()
+          showNotification(`Person (${person.name}) updated successfully`, 'success')
         }
       })
     }
@@ -89,8 +106,11 @@ const App = () => {
       window.alert(`${newNumber} is already added to phonebook`)
     } else {
       let newPersonObject = getNewPersonObject()
-      personsService.createPerson(newPersonObject).then(() => getAllPersons())
-      unsetValues()
+      personsService.createPerson(newPersonObject).then(() => {
+        getAllPersons()
+        unsetValues()
+        showNotification(`Person (${newPersonObject.name}) added successfully`, 'success')
+      })
     }
   }
 
@@ -101,6 +121,7 @@ const App = () => {
         <h2>Phonebook</h2>
         <Filter handleSearchChange={handleSearchChange}/>
         <h2>add new</h2>
+        {!!notification && <Notification notification={notification}/>}
         <PersonForm addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber}
                     handleNumberChange={handleNumberChange}/>
         <h2>Numbers</h2>

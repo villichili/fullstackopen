@@ -18,7 +18,12 @@ const PersonForm = ({addPerson, newName, handleNameChange, newNumber, handleNumb
   </form>
 }
 
-const Persons = ({filteredPersons}) => <>{filteredPersons.map(p => <div key={p.name}>{p.name} {p.number}</div>)}</>
+const Person = ({person, handleDelete}) =>
+    <div>{person.name} {person.number}
+      <button value={person.id} onClick={handleDelete}>delete</button>
+    </div>
+
+const Persons = ({filteredPersons, handleDelete}) => <>{filteredPersons.map(p => <Person key={p.name} person={p} handleDelete={handleDelete}/>)}</>
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -27,8 +32,13 @@ const App = () => {
   const [newSearch, setNewSearch] = useState('')
 
   useEffect(() => {
-    personsService.getAll().then(persons => setPersons(persons)).catch()
+    getAllPersons()
   }, [])
+
+  const getAllPersons = () => {
+    // This might not be necessary to always call for db to update could update the state also but this is easier
+    personsService.getAll().then(persons => setPersons(persons)).catch()
+  }
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
@@ -42,6 +52,16 @@ const App = () => {
     setNewSearch(event.target.value)
   }
 
+  const handleDelete = (event) => {
+    if (window.confirm(`Delete ${persons.find(p => p.id == event.target.value).name}`)) {
+      personsService.deletePerson(event?.target.value).then(response => {
+        if (response.status === 200) {
+          getAllPersons()
+        }
+      })
+    }
+  }
+
   const addPerson = (event) => {
     event.preventDefault()
     if (persons.find(p => p.name === newName)) {
@@ -50,8 +70,7 @@ const App = () => {
       window.alert(`${newNumber} is already added to phonebook`)
     } else {
       let newPersonObject = {name: newName, number: newNumber}
-      personsService.createPerson(newPersonObject)
-      setPersons(persons.concat(newPersonObject))
+      personsService.createPerson(newPersonObject).then(() => getAllPersons())
       setNewName('')
       setNewNumber('')
 
@@ -59,6 +78,7 @@ const App = () => {
   }
 
   const filteredPersons = newSearch && newSearch.length > 0 ? persons.filter(p => p.name.toLowerCase().includes(newSearch.toLowerCase())) : persons
+
   return (
       <div>
         <h2>Phonebook</h2>
@@ -67,7 +87,7 @@ const App = () => {
         <PersonForm addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber}
                     handleNumberChange={handleNumberChange}/>
         <h2>Numbers</h2>
-        <Persons filteredPersons={filteredPersons}/>
+        <Persons filteredPersons={filteredPersons} handleDelete={handleDelete}/>
       </div>
   )
 }

@@ -52,6 +52,17 @@ const App = () => {
     setNewSearch(event.target.value)
   }
 
+  const handleUpdate = (person) => {
+    if (window.confirm(`${person.name} is already added to phonebook, replace the old number with a new one?`)) {
+      personsService.updatePerson(person.id, getNewPersonObject()).then(response => {
+        if (response.status === 200) {
+          unsetValues()
+          getAllPersons()
+        }
+      })
+    }
+  }
+
   const handleDelete = (event) => {
     if (window.confirm(`Delete ${persons.find(p => p.id == event.target.value).name}`)) {
       personsService.deletePerson(event?.target.value).then(response => {
@@ -62,18 +73,24 @@ const App = () => {
     }
   }
 
+  const getNewPersonObject = () => ({name: newName, number: newNumber})
+
+  const unsetValues = () => {
+    setNewName('')
+    setNewNumber('')
+  }
+
   const addPerson = (event) => {
     event.preventDefault()
-    if (persons.find(p => p.name === newName)) {
-      window.alert(`${newName} is already added to phonebook`)
+    let personWitSameName = persons.find(p => p.name === newName)
+    if (personWitSameName) {
+      handleUpdate(personWitSameName)
     } else if (persons.find(p => p.number === newNumber)) {
       window.alert(`${newNumber} is already added to phonebook`)
     } else {
-      let newPersonObject = {name: newName, number: newNumber}
+      let newPersonObject = getNewPersonObject()
       personsService.createPerson(newPersonObject).then(() => getAllPersons())
-      setNewName('')
-      setNewNumber('')
-
+      unsetValues()
     }
   }
 

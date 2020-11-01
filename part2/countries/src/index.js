@@ -9,7 +9,6 @@ const Country = ({country}) => {
     axios.get(`http://api.weatherstack.com/current?access_key=${process.env.REACT_APP_WEATHER_API_KEY}&query=${country.capital}&units=m`)
         .then(response => setWeather(response.data))
   }, [])
-  console.log(weather)
   return (
       <div>
         <h2>{country.name}</h2>

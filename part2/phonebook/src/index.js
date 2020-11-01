@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import ReactDOM from 'react-dom'
-import axios from 'axios'
+import personsService from "./services/persons"
 
 const Filter = ({handleSearchChange}) => <div>filter :<input onChange={handleSearchChange}/></div>
 
@@ -27,7 +27,7 @@ const App = () => {
   const [newSearch, setNewSearch] = useState('')
 
   useEffect(() => {
-    axios.get('http://localhost:3001/persons').then(response => setPersons(response.data)).catch()
+    personsService.getAll().then(persons => setPersons(persons)).catch()
   }, [])
 
   const handleNameChange = (event) => {
@@ -49,7 +49,9 @@ const App = () => {
     } else if (persons.find(p => p.number === newNumber)) {
       window.alert(`${newNumber} is already added to phonebook`)
     } else {
-      setPersons(persons.concat({name: newName, number: newNumber}))
+      let newPersonObject = {name: newName, number: newNumber}
+      personsService.createPerson(newPersonObject)
+      setPersons(persons.concat(newPersonObject))
       setNewName('')
       setNewNumber('')
 
